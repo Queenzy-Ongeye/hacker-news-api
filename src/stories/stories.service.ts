@@ -14,6 +14,22 @@ export class StoriesService {
         return topStoryIds.slice(0,25);
     };
 
-  
+    extractWords(titles: string[]): Record<string, number>{
+        const wordCount = {}
+        titles.forEach(title => {
+            const words = title.split(/\s+/);
+            words.forEach(word => {
+                if (word) wordCount[word] = (wordCount[word] || 0) + 1;
+            });
+        });
+        return wordCount;
+    };
+
+    getTopWords(wordCount: Record<string, number>, limit: number = 10): string[] {
+        return Object.entries(wordCount)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(entry => entry[0]);
+    };
 
 }
