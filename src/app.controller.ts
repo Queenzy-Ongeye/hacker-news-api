@@ -4,10 +4,10 @@ import { StoriesService } from './stories/stories.service';
 
 @Controller()
 export class AppController {
-  constructor(private storiesService: StoriesService) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
-    return "Welcome to Hacker News";
+    return this.appService.getHello();
   }
 }
