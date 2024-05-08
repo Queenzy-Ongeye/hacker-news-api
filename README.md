@@ -42,10 +42,18 @@ This will start the application on http://localhost:3000 by default.
 ## API Endpoints
 The application provides the following endpoints:
 
-- GET /stories/top-words: Returns the top 10 most occurring words in the titles of the last 25 stories.
+- `GET /stories/top-words`: Returns the top 10 most occurring words in the titles of the last 25 stories.
+- `GET /stories/top-last-posts`: Returns the top 10 most occurring words in the titles of the post of exactly the last week 3.
 
-## Stay in touch
-- Author - Quienzy Ong'eye.
+## Usage Example
+To get the top words from the last 25 stories:
+```bash
+curl http://localhost:3000/stories/top-words
+```
+
+
+## Contact
+- Author - Quienzy Ong'eye [queenzyongeye@gmail.com].
 
 ## License
 Nest is [MIT licensed](LICENSE).
