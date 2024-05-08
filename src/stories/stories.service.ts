@@ -31,7 +31,21 @@ export class StoriesService {
     }
 
     // Top 10 most occurring words in the titles of the post of exactly the last week 3 -----Start
-    
+    async fetchLastThreeWeekTitles(): Promise<any[]> {
+        const storyIds = await this.fetchTopStories(); // reusing the fetchTopStories()
+        return this.fetchTitlesFromStoryIdsWithinPeriod(storyIds, 3)
+    }
+
+    async fetchTitlesFromStoryIdsWithinPeriod(storyIds: number[], weeks: number): Promise<string[]> {
+        const weeksAgoTimeStamp = (Date.now() / 1000) - (weeks * 7 * 24 * 60 * 60); // Convert current time to seconds and calculate weeks ago
+        const responses = await Promise.all(
+            storyIds.map(id => this.axios.get<Post>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
+        );
+        const relevantPosts = responses
+            .map(response => response.data)
+            .filter(post => post.time > weeksAgoTimeStamp); // Filter posts newer than three weeks ago
+        return relevantPosts.map(post => post.title);
+    }
 
     // extracting words from titles
     extractWords(titles: string[]): Record<string, number> {
