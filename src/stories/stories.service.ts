@@ -3,10 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { AxiosInstance } from 'axios';
 import { response } from 'express';
 
-interface Post {
+interface Story {
     id: number;
     title: string;
     time: number;
+    by: string;
 }
 
 interface Users {
@@ -45,7 +46,7 @@ export class StoriesService {
     async fetchTitlesFromStoryIdsWithinPeriod(storyIds: number[], weeks: number): Promise<string[]> {
         const weeksAgoTimeStamp = (Date.now() / 1000) - (weeks * 7 * 24 * 60 * 60);
         const responses = await Promise.all(
-            storyIds.map(id => this.axios.get<Post>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
+            storyIds.map(id => this.axios.get<Story>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
         );
         const relevantPosts = responses
             .map(response => response.data)
@@ -59,17 +60,17 @@ export class StoriesService {
         return this.fetchTitlesFromUsersWithKarma(storyId, 10000, 600)
     }
     async fetchTitlesFromUsersWithKarma(storyId: number[], minKarma: number, numStories: number): Promise<any[]> {
-        const responses = await Promise.all(
-            storyId.map(id => this.axios.get<Users>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
+        const stories = await Promise.all(
+            storyId.map(id => this.axios.get<Story>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
         );
-        const highKarmUsers = responses.map(response => response.data)
-            .filter(user => user.karma >= minKarma).slice(0, numStories);
 
-        const relevantStory = await Promise.all(
-            highKarmUsers.flatMap(user => user.created.slice(0, 30))
-                .map(storyId => this.axios.get(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`))
+        const userIds = stories.map(story => story.data.by);
+        const users = await Promise.all(
+            userIds.map(userId => this.axios.get<Users>(`https://hacker-news.firebaseio.com/v0/user/${userId}.json`))
         );
-        return relevantStory.map(karmaStory => karmaStory.data.title)
+        const highKarmaUsers = users.map(response => response.data)
+            .filter(user => user.karma >= minKarma).slice(0, numStories);
+        return highKarmaUsers.map(karmaStory => karmaStory.karma);
     }
 
     // extracting words from titles
