@@ -45,7 +45,7 @@ export class StoriesController {
             const topKarmaStories = await this.storiesService.getTopWords(wordCount);
             return { topKarmStories: topKarmaStories };
         } catch (error) {
-            throw new HttpException("Failed to fetch posts", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
