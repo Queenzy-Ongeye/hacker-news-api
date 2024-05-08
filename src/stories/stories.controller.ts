@@ -33,4 +33,19 @@ export class StoriesController {
             throw new HttpException("Failed to fetch posts", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Get("top-karma-stories")
+    async getTopKarmaStories() {
+        try {
+            const karmaStories = await this.storiesService.fetchKarmaTopStories();
+            if (!karmaStories.length) {
+                throw new HttpException("Failed to load data", HttpStatus.NOT_FOUND);
+            }
+            const wordCount = await this.storiesService.extractWords(karmaStories);
+            const topKarmaStories = await this.storiesService.getTopWords(wordCount);
+            return { topKarmStories: topKarmaStories };
+        } catch (error) {
+            throw new HttpException("Failed to fetch posts", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
