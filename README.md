@@ -75,4 +75,4 @@ curl http://localhost:3000/stories/top-words
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+The project is [MIT licensed](LICENSE).
