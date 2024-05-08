@@ -18,14 +18,13 @@ Access to an internet connection for fetching data from the HackerNews API.
 Clone the repository to your local machine:
 ```bash
 git clone https://github.com/Queenzy-Ongeye/hacker-news-api.git
-
+```
 ## Installing dependancies
 ```bash
 $ npm install
  ## or if using yarn
-```bash
 yarn install
-
+```
 ## Cofiguration
 No additional setup or environment variables are needed for the basic functionality. However, you can configure the port and other parameters by modifying the `src/main.ts` file if necessary.
 
@@ -37,7 +36,7 @@ $ npm run start
 ## or
 # watch mode
 $ npm run start:dev
-
+```
 This will start the application on http://localhost:3000 by default.
 
 ## API Endpoints
