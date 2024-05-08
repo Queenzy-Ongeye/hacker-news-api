@@ -54,11 +54,24 @@ export class StoriesService {
     }
 
     // top 10 most occurring words in titles of the last 600 stories of users with at least 10.000 karma
-    async fetchKarmaTopStories():Promise<any[]>{
+    async fetchKarmaTopStories(): Promise<any[]> {
         const storyId = await this.fetchTopStories()
-        return this.fetchTitlesFromUsersWithKarma(storyId,10000, 600)
+        return this.fetchTitlesFromUsersWithKarma(storyId, 10000, 600)
     }
-   
+    async fetchTitlesFromUsersWithKarma(storyId: number[], minKarma: number, numStories: number): Promise<any[]> {
+        const responses = await Promise.all(
+            storyId.map(id => this.axios.get<Users>(`https://hacker-news.firebaseio.com/v0/item/${id}.json`))
+        );
+        const highKarmUsers = responses.map(response => response.data)
+            .filter(user => user.karma >= minKarma).slice(0, numStories);
+
+        const relevantStory = await Promise.all(
+            highKarmUsers.flatMap(user => user.created.slice(0, 30))
+                .map(storyId => this.axios.get(`https://hacker-news.firebaseio.com/v0/item/${storyId}.json`))
+        );
+        return relevantStory.map(karmaStory => karmaStory.data.title)
+    }
+
     // extracting words from titles
     extractWords(titles: string[]): Record<string, number> {
         const wordCount = {}
